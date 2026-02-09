@@ -1,16 +1,53 @@
-// Load variables from JSON file
-@description('Path to variables JSON file')
-param variablesFile string = 'storage-variables.json'
+// Parameters - these should be passed from the main deployment
+@description('Azure region for resources')
+param location string = 'eastus'
 
-var variables = json(loadTextContent(variablesFile))
+@description('Project name prefix')
+param projectName string = 'myapp'
 
-// Parameters loaded from variables file
-param location string = variables.location
-param projectName string = variables.projectName
-param environment string = variables.environment
-param tags object = variables.tags
-param storageSku string = variables.storage.sku
-param storageKind string = variables.storage.kind
+@description('Environment name')
+param environment string = 'dev'
+
+@description('Tags to apply to resources')
+param tags object = {
+  Environment: 'Development'
+  Project: 'MyApp'
+  Owner: 'DevTeam'
+}
+
+@description('Storage account SKU')
+param storageSku string = 'Standard_LRS'
+
+@description('Storage account kind')
+param storageKind string = 'StorageV2'
+
+@description('Minimum TLS version')
+param minimumTlsVersion string = 'TLS1_2'
+
+@description('Allow blob public access')
+param allowBlobPublicAccess bool = false
+
+@description('Network ACLs configuration')
+param networkAcls object = {
+  bypass: 'AzureServices'
+  defaultAction: 'Allow'
+}
+
+@description('List of containers to create')
+param containers array = [
+  {
+    name: 'data'
+    publicAccess: 'None'
+  }
+  {
+    name: 'logs'
+    publicAccess: 'None'
+  }
+  {
+    name: 'uploads'
+    publicAccess: 'Blob'
+  }
+]
 
 // Resource Group
 resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
@@ -29,17 +66,14 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
   kind: storageKind
   properties: {
-    minimumTlsVersion: variables.storage.minimumTlsVersion
-    allowBlobPublicAccess: variables.storage.allowBlobPublicAccess
-    networkAcls: variables.storage.networkAcls
+    minimumTlsVersion: minimumTlsVersion
+    allowBlobPublicAccess: allowBlobPublicAccess
+    networkAcls: networkAcls
   }
   tags: tags
 }
 
 // Storage Containers
-@description('List of containers to create')
-param containers array = variables.containers
-
 resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = [for container in containers: {
   parent: storageAccount
   name: container.name
