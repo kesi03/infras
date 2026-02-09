@@ -1,0 +1,34 @@
+{
+  "location": "eastus",
+  "projectName": "myapp",
+  "environment": "dev",
+  "tags": {
+    "Environment": "Development",
+    "Project": "MyApp",
+    "Owner": "DevTeam"
+  },
+  "storage": {
+    "sku": "Standard_LRS",
+    "kind": "StorageV2",
+    "minimumTlsVersion": "TLS1_2",
+    "allowBlobPublicAccess": false,
+    "networkAcls": {
+      "bypass": "AzureServices",
+      "defaultAction": "Allow"
+    }
+  },
+  "containers": [
+    {
+      "name": "data",
+      "publicAccess": "None"
+    },
+    {
+      "name": "logs",
+      "publicAccess": "None"
+    },
+    {
+      "name": "uploads",
+      "publicAccess": "Blob"
+    }
+  ]
+}
