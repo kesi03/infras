@@ -1,0 +1,21 @@
+{
+  "location": "eastus",
+  "projectName": "myapp",
+  "environment": "dev",
+  "tags": {
+    "Environment": "Development",
+    "Project": "MyApp",
+    "Owner": "DevTeam"
+  },
+  "storage": {
+    "sku": "Standard_LRS"
+  },
+  "vnet": {
+    "addressPrefix": "10.0.0.0/16"
+  },
+  "subnets": {
+    "default": {
+      "addressPrefix": "10.0.1.0/24"
+    }
+  }
+}
